@@ -1,8 +1,36 @@
+from django.contrib.auth import authenticate
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.request import Request
 from .models import User, Organization
+from .response import APIResponse
 from .serializers import UserSerializer, OrganizationSerializer, UserDetailSerializer
+
+
+def verify_user_password(request: Request):
+    email = request.data.get("email")
+    password = request.data.get("password")
+
+    user = authenticate(request, username=email, password=password)
+
+    if not user:
+        return APIResponse(False, "Incorrect email or password")
+
+    return APIResponse(True, {
+        "user_id": user.id,  # type: ignore[attr-defined]
+        "message": "Successfully authenticated user"
+    })
+
+
+def get_user_by_id(request: Request, user_id) -> APIResponse:
+    try:
+        user = User.objects.get(active=True, id=user_id)
+    except User.objects.DoesNotExist:
+        return APIResponse(False, "User does not exist with that ID")
+
+    serializer = UserSerializer(user)
+    return Response(serializer.data)
 
 class UserListView(APIView):
     def get(self, request):
