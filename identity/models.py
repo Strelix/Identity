@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, UserManager
+from django.contrib.auth.models import AbstractUser, UserManager, Group, Permission
 from django.utils import timezone
 import itertools
 
@@ -8,13 +8,26 @@ class CustomUserManager(UserManager):
         return (
             super()
             .get_queryset()
-            .select_related("user_profile", "logged_in_as_team")
-            .annotate(notification_count=models.Count("user_notifications"))
         )
 
 
 class User(AbstractUser):
     objects: CustomUserManager = CustomUserManager()  # type: ignore
+
+    groups = models.ManyToManyField(
+        Group,
+        related_name="custom_user_set",  # Unique related name
+        blank=True,
+        help_text="The groups this user belongs to. A user will get all permissions granted to each of their groups.",
+        verbose_name="groups",
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        related_name="custom_user_permissions_set",  # Unique related name
+        blank=True,
+        help_text="Specific permissions for this user.",
+        verbose_name="user permissions",
+    )
 
     logged_in_as_team = models.ForeignKey("Organization", on_delete=models.SET_NULL, null=True, blank=True)
     stripe_customer_id = models.CharField(max_length=255, null=True, blank=True)
