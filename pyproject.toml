@@ -5,6 +5,30 @@ description = "github.com/Strelix/Identity"
 authors = ["TreyWW"]
 readme = "README.md"
 
+[project]
+name = "strelix-identity"
+version = "0.0.1-1"
+description = "Strelix Identity is a lightweight service for managing user and organization identities. It provides a simple API to create, update, and manage users and organizations, designed to integrate seamlessly with your existing projects. This service is part of the Strelix ecosystem, designed for secure, scalable, and efficient identity management."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "TreyWW", email = "trey@strelix.org" },
+]
+
+keywords = ["identity", "authentication", "strelix", "myfinances"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+
+
+[project.urls]
+Homepage = "https://github.com/Strelix/Identity"
+
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
 bleach = "6.1.0"  # used for HTML sanitation
@@ -53,6 +77,8 @@ types-six = "^1.16.21.20240513"
 mkdocs = "^1.5.3"
 mkdocs-material = "^9.5.15"
 mkdocs-git-committers-plugin-2 = "^2.3.0"
+build = "^1.2.2.post1"
+twine = "^6.0.1"
 
 [tool.poetry.group.mysql]
 optional = true
@@ -75,8 +101,11 @@ max_line_length = 110
 line-length = 140
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["strelix_identity_client"]
 
 [tool.bumpversion]
 current_version = "0.9.1"
